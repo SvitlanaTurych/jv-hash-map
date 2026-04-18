@@ -48,8 +48,27 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         }
     }
 
+    @Override
+    public V getValue(K key) {
+        hash = hashCheck(key);
+        index = getIndex(hash);
+        MyNode<K, V> current = table[index];
+        while (current != null) {
+            if (Objects.equals(current.key, key) && current.hash == hash) {
+                return (V) current.value;
+            }
+            current = current.next;
+        }
+        return null;
+    }
+
+    @Override
+    public int getSize() {
+        return size;
+    }
+
     private void resize() {
-        MyNode<K, V>[] newTable = (MyNode<K, V>[]) new MyNode[capacity * 2];
+        MyNode<K, V>[] newTable = (MyNode<K, V>[]) new MyNode[capacity * RESIZE_FACTOR];
         capacity = capacity * RESIZE_FACTOR;
         for (int i = 0; i < table.length; i++) {
             MyNode<K, V> current = table[i];
@@ -70,25 +89,6 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             }
         }
         table = newTable;
-    }
-
-    @Override
-    public V getValue(K key) {
-        hash = hashCheck(key);
-        index = getIndex(hash);
-        MyNode<K, V> current = table[index];
-        while (current != null) {
-            if (Objects.equals(current.key, key) && current.hash == hash) {
-                return (V) current.value;
-            }
-            current = current.next;
-        }
-        return null;
-    }
-
-    @Override
-    public int getSize() {
-        return size;
     }
 
     private int getIndex(int hash) {
